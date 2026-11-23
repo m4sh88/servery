@@ -1,0 +1,2017 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Startseite</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg-glow-1: rgba(56, 189, 248, 0.16);
+      --bg-glow-2: rgba(129, 140, 248, 0.14);
+      --card: rgba(20, 29, 53, 0.82);
+      --card-border: rgba(148, 163, 184, 0.18);
+      --inner: rgba(10, 15, 30, 0.72);
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-text: #061322;
+      --danger: #f87171;
+      --ok: #34d399;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 10%, var(--bg-glow-1), transparent 45%),
+        radial-gradient(circle at 88% 18%, var(--bg-glow-2), transparent 45%),
+        var(--bg);
+      padding: 20px 18px 80px;
+      transition: background 0.25s ease, color 0.2s ease;
+    }
+
+    .wrap {
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .brand-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.35rem;
+      font-weight: 750;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    button, select, input, textarea {
+      font-family: inherit;
+      font-size: 0.92rem;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+      background: var(--inner);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s ease, transform 0.12s ease, background 0.15s ease;
+    }
+
+    button:focus, select:focus, input:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+
+    button {
+      padding: 9px 13px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: var(--accent-text);
+      border-color: transparent;
+    }
+
+    button.primary:hover {
+      filter: brightness(1.07);
+    }
+
+    button.ghost:hover {
+      background: rgba(148, 163, 184, 0.14);
+    }
+
+    button.active-mode {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    button.danger-btn {
+      border-color: rgba(248, 113, 113, 0.45);
+      color: var(--danger);
+    }
+
+    button.danger-btn:hover {
+      background: rgba(248, 113, 113, 0.14);
+    }
+
+    .search-panel {
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    }
+
+    .search-panel select {
+      padding: 11px 12px;
+      min-width: 140px;
+    }
+
+    .search-panel input {
+      flex: 1;
+      padding: 11px 14px;
+      font-size: 1rem;
+    }
+
+    .search-panel button {
+      padding: 11px 18px;
+    }
+
+    .canvas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+
+    .canvas-free {
+      position: relative;
+      min-height: 820px;
+      border-radius: 18px;
+      border: 1px dashed rgba(148, 163, 184, 0.22);
+      background-image: radial-gradient(rgba(148, 163, 184, 0.16) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .widget {
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      min-width: 240px;
+      min-height: 130px;
+    }
+
+    .canvas-free .widget {
+      position: absolute;
+      resize: both;
+      overflow: auto;
+    }
+
+    .widget.dragging {
+      opacity: 0.65;
+      border-color: var(--accent);
+      z-index: 25;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .widget.drag-over {
+      border-color: var(--accent);
+    }
+
+    .widget-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .widget-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 0.96rem;
+    }
+
+    .widget-title img {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      color: var(--muted);
+      user-select: none;
+      padding: 2px 6px;
+      border-radius: 6px;
+      touch-action: none;
+    }
+
+    .drag-handle:hover {
+      color: var(--text);
+      background: rgba(148, 163, 184, 0.14);
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      padding: 4px 7px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .icon-btn:hover {
+      color: var(--text);
+      background: rgba(148, 163, 184, 0.14);
+    }
+
+    .icon-btn.del:hover {
+      color: var(--danger);
+    }
+
+    .provider-search-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .provider-search-form input {
+      flex: 1;
+      padding: 10px 12px;
+      min-width: 0;
+    }
+
+    .provider-search-form button {
+      padding: 10px 14px;
+    }
+
+    .clock-time {
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+
+    .clock-date {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .weather-temp {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .weather-meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* Nachrichten-Widget */
+    .news-controls {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .news-controls select, .news-controls input {
+      padding: 7px 9px;
+      font-size: 0.84rem;
+      flex: 1;
+      min-width: 110px;
+    }
+
+    .news-controls button {
+      padding: 7px 10px;
+      font-size: 0.84rem;
+    }
+
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .news-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: var(--inner);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .news-item:hover {
+      border-color: var(--accent);
+    }
+
+    .news-headline {
+      font-size: 0.86rem;
+      font-weight: 600;
+      line-height: 1.32;
+    }
+
+    .news-meta {
+      font-size: 0.74rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .news-add-source {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding-top: 4px;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .news-add-source input {
+      flex: 1;
+      min-width: 110px;
+      padding: 6px 8px;
+      font-size: 0.8rem;
+    }
+
+    .news-add-source button {
+      padding: 6px 10px;
+      font-size: 0.8rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 95px;
+      flex: 1;
+      resize: vertical;
+      padding: 10px;
+      line-height: 1.45;
+    }
+
+    .bookmarks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+      gap: 8px;
+    }
+
+    .bm-tile {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      background: var(--inner);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .bm-tile:hover {
+      border-color: var(--accent);
+    }
+
+    .bm-tile img {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .bm-tile span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bm-del {
+      position: absolute;
+      top: 2px;
+      right: 3px;
+      background: var(--inner);
+      border: none;
+      color: var(--muted);
+      font-size: 0.72rem;
+      padding: 1px 4px;
+      border-radius: 5px;
+      opacity: 0;
+    }
+
+    .bm-tile:hover .bm-del {
+      opacity: 1;
+    }
+
+    .bm-del:hover {
+      color: var(--danger);
+    }
+
+    .inline-form {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .inline-form input {
+      flex: 1;
+      min-width: 90px;
+      padding: 7px 9px;
+      font-size: 0.84rem;
+    }
+
+    .inline-form button {
+      padding: 7px 11px;
+      font-size: 0.84rem;
+    }
+
+    .status-bar {
+      margin-top: 16px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      min-height: 1.2em;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.72);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 620px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.48);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 1.14rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 10px;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: var(--accent-text);
+      border-color: transparent;
+    }
+
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+      gap: 8px;
+    }
+
+    .catalog-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-start;
+      text-align: left;
+      padding: 10px 12px;
+      background: var(--inner);
+    }
+
+    .catalog-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .catalog-btn img {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-group label {
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .field-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .field-row input, .field-row select {
+      flex: 1;
+      min-width: 140px;
+      padding: 9px 11px;
+    }
+
+    .color-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .color-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: var(--inner);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.85rem;
+    }
+
+    .color-box input[type="color"] {
+      width: 34px;
+      height: 28px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .user-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .user-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--inner);
+      border: 1px solid var(--card-border);
+      font-size: 0.88rem;
+    }
+
+    .badge {
+      font-size: 0.74rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.16);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .badge.admin {
+      background: rgba(52, 211, 153, 0.18);
+      color: var(--ok);
+    }
+
+    .msg-error {
+      color: var(--danger);
+      font-size: 0.85rem;
+    }
+
+    .msg-ok {
+      color: var(--ok);
+      font-size: 0.85rem;
+    }
+
+    .hint-text {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .setup-banner {
+      background: rgba(248, 113, 113, 0.14);
+      border: 1px solid rgba(248, 113, 113, 0.45);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .search-panel {
+        flex-direction: column;
+      }
+      .canvas-free {
+        position: static;
+        min-height: auto;
+        border: none;
+        background-image: none;
+      }
+      .canvas-free .widget {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        resize: none;
+        margin-bottom: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="setup-banner" id="setupBanner">
+      <strong>Firebase noch nicht eingetragen:</strong> Öffne <code>index.html</code> und füge oben im <code>&lt;script type="module"&gt;</code>-Block deine <strong>firebaseConfig</strong> aus der Firebase-Konsole ein. Bis dahin läuft die Seite im lokalen Browser-Modus.
+    </div>
+
+    <header>
+      <div class="brand-group">
+        <div class="brand" id="pageTitle">✨ Meine Startseite</div>
+        <div class="subtitle" id="pageSubtitle">Alle Suchanfragen & Nachrichten öffnen automatisch im neuen Tab</div>
+      </div>
+      <div class="toolbar">
+        <button class="primary" onclick="openModal('widgetModal')">+ Widget</button>
+        <button class="ghost" id="layoutModeBtn" onclick="toggleLayoutMode()">🧲 Frei bewegen: Aus</button>
+        <button class="ghost" onclick="openModal('settingsModal')">🎨 Farben & Profil</button>
+        <button class="ghost" id="adminBtn" style="display:none" onclick="openModal('adminModal')">🛡️ Admin</button>
+        <button class="ghost" id="authBtn" onclick="openModal('authModal')">👤 Login / Registrieren</button>
+      </div>
+    </header>
+
+    <form class="search-panel" onsubmit="handleGlobalSearch(event)">
+      <select id="engine" aria-label="Standardsuchmaschine">
+        <option value="https://www.google.com/search?q=">Google</option>
+        <option value="https://www.youtube.com/results?search_query=">YouTube</option>
+        <option value="https://www.ebay.de/sch/i.html?_nkw=">eBay</option>
+        <option value="https://www.amazon.de/s?k=">Amazon</option>
+        <option value="https://www.idealo.de/preisvergleich/MainSearchProductCategory.html?q=">Idealo</option>
+        <option value="https://de.wikipedia.org/w/index.php?search=">Wikipedia</option>
+        <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
+      </select>
+      <input id="searchInput" type="text" placeholder="Schnellsuche (öffnet im neuen Tab)..." autofocus required />
+      <button class="primary" type="submit">Suchen ↗</button>
+    </form>
+
+    <main class="canvas-grid" id="grid"></main>
+    <div class="status-bar">
+      <span id="status"></span>
+      <span id="layoutHint"></span>
+    </div>
+  </div>
+
+  <!-- MODAL 1: Login & Registrierung -->
+  <div class="modal-backdrop" id="authModal" onclick="closeModalOnBackdrop(event, 'authModal')">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>👤 Benutzerkonto</h3>
+        <button class="icon-btn" onclick="closeModal('authModal')">✕</button>
+      </div>
+
+      <div id="loggedInBox" style="display:none" class="field-group">
+        <div class="user-item">
+          <div>
+            Eingeloggt als <strong id="currentUserLabel"></strong>
+            <span class="badge" id="currentRoleBadge"></span>
+          </div>
+          <button class="danger-btn" onclick="logoutUser()">Abmelden</button>
+        </div>
+        <div class="hint-text">Deine Startseite, Farben, Nachrichten-Quellen, Widgets und Positionen sind in Firebase Firestore deinem Konto zugeordnet.</div>
+      </div>
+
+      <div id="authFormsBox">
+        <div class="tabs">
+          <button class="tab-btn active" id="tabLogin" onclick="switchAuthTab('login')">Anmelden</button>
+          <button class="tab-btn" id="tabRegister" onclick="switchAuthTab('register')">Neu registrieren</button>
+        </div>
+
+        <form id="loginForm" class="field-group" onsubmit="handleLogin(event)">
+          <label>Benutzername oder E-Mail</label>
+          <input type="text" id="loginUsername" placeholder="z. B. christopher oder name@beispiel.de" required />
+          <label>Passwort</label>
+          <input type="password" id="loginPassword" placeholder="Passwort" required />
+          <div class="field-row">
+            <button class="primary" type="submit">Einloggen</button>
+          </div>
+          <div id="authMsg" class="msg-error"></div>
+          <div class="hint-text">
+            Tipp: Du kannst einfach einen Benutzernamen wie <code>christopher</code> eingeben – intern wird daraus automatisch <code>christopher@startseite.local</code> gemacht (oder du gibst eine echte E-Mail ein). Der <strong>erste registrierte Nutzer</strong> wird automatisch <strong>Admin</strong>!
+          </div>
+        </form>
+
+        <form id="registerForm" class="field-group" style="display:none" onsubmit="handleRegister(event)">
+          <label>Neuer Benutzername oder E-Mail</label>
+          <input type="text" id="regUsername" placeholder="z. B. christopher" minlength="3" required />
+          <label>Passwort (mind. 6 Zeichen für Firebase Auth)</label>
+          <input type="password" id="regPassword" placeholder="Passwort festlegen" minlength="6" required />
+          <div class="field-row">
+            <button class="primary" type="submit">Konto erstellen & starten</button>
+          </div>
+          <div id="regMsg" class="msg-error"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Farben, Titel & Layout -->
+  <div class="modal-backdrop" id="settingsModal" onclick="closeModalOnBackdrop(event, 'settingsModal')">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>🎨 Farben, Titel & Layout</h3>
+        <button class="icon-btn" onclick="closeModal('settingsModal')">✕</button>
+      </div>
+
+      <div class="field-group">
+        <label for="settingTitle">Titel deiner Startseite</label>
+        <input type="text" id="settingTitle" placeholder="z. B. ✨ Meine Startseite" oninput="updateAppearance()" />
+      </div>
+
+      <div class="field-group">
+        <label>Eigene Farben anpassen</label>
+        <div class="color-row">
+          <div class="color-box">
+            <span>Hintergrund</span>
+            <input type="color" id="colBg" oninput="updateAppearance()" />
+          </div>
+          <div class="color-box">
+            <span>Widget-Fläche</span>
+            <input type="color" id="colCard" oninput="updateAppearance()" />
+          </div>
+          <div class="color-box">
+            <span>Akzentfarbe</span>
+            <input type="color" id="colAccent" oninput="updateAppearance()" />
+          </div>
+          <div class="color-box">
+            <span>Textfarbe</span>
+            <input type="color" id="colText" oninput="updateAppearance()" />
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Farb-Vorlagen</label>
+        <div class="field-row">
+          <button class="ghost" type="button" onclick="applyPresetColors('ocean')">Nachtblau</button>
+          <button class="ghost" type="button" onclick="applyPresetColors('emerald')">Smaragd</button>
+          <button class="ghost" type="button" onclick="applyPresetColors('sunset')">Sunset</button>
+          <button class="ghost" type="button" onclick="applyPresetColors('light')">Hell</button>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Widgets anordnen & Größe ändern</label>
+        <div class="field-row">
+          <button class="primary" type="button" onclick="closeModal('settingsModal'); toggleLayoutMode();">🧲 Frei bewegen & Größe ziehen</button>
+          <button class="ghost" type="button" onclick="resetPositions()">📐 Positionen zurücksetzen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Widget-Katalog -->
+  <div class="modal-backdrop" id="widgetModal" onclick="closeModalOnBackdrop(event, 'widgetModal')">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>➕ Widget hinzufügen</h3>
+        <button class="icon-btn" onclick="closeModal('widgetModal')">✕</button>
+      </div>
+
+      <div>
+        <div class="section-label">Nachrichten-Widget (mit Filter & Seitensuche)</div>
+        <div class="catalog-grid">
+          <button class="catalog-btn" onclick="addWidget('news'); closeModal('widgetModal')">📰 Nachrichten (BILD, MAZ, n-tv...)</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Suchmaschinen- & Seiten-Such-Widgets (neuer Tab)</div>
+        <div class="catalog-grid">
+          <button class="catalog-btn" onclick="addSearchProvider('Google', 'https://www.google.com/search?q=', 'google.com', 'Bei Google suchen...')">
+            <img src="https://www.google.com/s2/favicons?domain=google.com&sz=32" alt=""> Google
+          </button>
+          <button class="catalog-btn" onclick="addSearchProvider('BILD Suche', 'https://www.google.com/search?q=' + encodeURIComponent('site:bild.de ') + '{q}', 'bild.de', 'Auf BILD suchen...')">
+            <img src="https://www.google.com/s2/favicons?domain=bild.de&sz=32" alt=""> BILD Suche
+          </button>
+          <button class="catalog-btn" onclick="addSearchProvider('MAZ Suche', 'https://www.google.com/search?q=' + encodeURIComponent('site:maz-online.de ') + '{q}', 'maz-online.de', 'Auf MAZ suchen...')">
+            <img src="https://www.google.com/s2/favicons?domain=maz-online.de&sz=32" alt=""> MAZ Suche
+          </button>
+          <button class="catalog-btn" onclick="addSearchProvider('n-tv Suche', 'https://www.n-tv.de/suche/?q=', 'n-tv.de', 'Auf n-tv suchen...')">
+            <img src="https://www.google.com/s2/favicons?domain=n-tv.de&sz=32" alt=""> n-tv Suche
+          </button>
+          <button class="catalog-btn" onclick="addSearchProvider('YouTube', 'https://www.youtube.com/results?search_query=', 'youtube.com', 'Auf YouTube suchen...')">
+            <img src="https://www.google.com/s2/favicons?domain=youtube.com&sz=32" alt=""> YouTube
+          </button>
+          <button class="catalog-btn" onclick="addSearchProvider('eBay', 'https://www.ebay.de/sch/i.html?_nkw=', 'ebay.de', 'Auf eBay suchen...')">
+            <img src="https://www.google.com/s2/favicons?domain=ebay.de&sz=32" alt=""> eBay
+          </button>
+          <button class="catalog-btn" onclick="addSearchProvider('Amazon', 'https://www.amazon.de/s?k=', 'amazon.de', 'Bei Amazon suchen...')">
+            <img src="https://www.google.com/s2/favicons?domain=amazon.de&sz=32" alt=""> Amazon
+          </button>
+          <button class="catalog-btn" onclick="addSearchProvider('Idealo', 'https://www.idealo.de/preisvergleich/MainSearchProductCategory.html?q=', 'idealo.de', 'Preise auf Idealo suchen...')">
+            <img src="https://www.google.com/s2/favicons?domain=idealo.de&sz=32" alt=""> Idealo
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Eigenes Such-Widget anlegen</div>
+        <form class="field-group" onsubmit="addCustomSearchProvider(event)">
+          <div class="field-row">
+            <input type="text" id="customProviderName" placeholder="Name (z. B. MAZ, BILD, Thomann)" required />
+            <input type="text" id="customProviderUrl" placeholder="Domain oder Such-URL (z. B. maz-online.de)" required />
+            <button class="primary" type="submit">Erstellen</button>
+          </div>
+        </form>
+      </div>
+
+      <div>
+        <div class="section-label">Weitere Widgets</div>
+        <div class="catalog-grid">
+          <button class="catalog-btn" onclick="addWidget('clock'); closeModal('widgetModal')">🕒 Uhrzeit</button>
+          <button class="catalog-btn" onclick="addWidget('weather'); closeModal('widgetModal')">🌤️ Wetter</button>
+          <button class="catalog-btn" onclick="addWidget('bookmarks'); closeModal('widgetModal')">🔖 Lesezeichen</button>
+          <button class="catalog-btn" onclick="addWidget('note'); closeModal('widgetModal')">📝 Notizen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: Admin-Bereich -->
+  <div class="modal-backdrop" id="adminModal" onclick="closeModalOnBackdrop(event, 'adminModal')">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>🛡️ Admin-Bereich – Benutzerübersicht</h3>
+        <button class="icon-btn" onclick="closeModal('adminModal')">✕</button>
+      </div>
+
+      <div class="hint-text">
+        Hier siehst du alle registrierten Profile aus Firestore und kannst Rollen vergeben oder Profile entfernen. (Neue Accounts legen sich über „Neu registrieren“ mit eigenem Passwort an.)
+      </div>
+      <div id="adminMsg" class="msg-ok"></div>
+      <div id="adminUserList" class="user-list">Lade Benutzer...</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      deleteDoc,
+      collection,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+    // =========================================================================
+    // HIER DEINE FIREBASE-KONFIGURATION EINTRAGEN (aus Firebase Console -> Projekt-Einstellungen)
+    // =========================================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyBXXXFMVoDLtNGV4NO4BFaVGmtz_U2RPMc",
+      authDomain: "servery-12270.firebaseapp.com",
+      projectId: "servery-12270",
+      storageBucket: "servery-12270.firebasestorage.app",
+      messagingSenderId: "93296951317",
+      appId: "1:93296951317:web:6efedb0f8c01f1e8648e1c"
+    };
+    // =========================================================================
+
+    const isFirebaseConfigured = Boolean(
+      firebaseConfig.apiKey &&
+      !firebaseConfig.apiKey.startsWith("DEIN_") &&
+      firebaseConfig.projectId &&
+      !firebaseConfig.projectId.startsWith("DEIN_")
+    );
+
+    let auth = null;
+    let db = null;
+    if (isFirebaseConfigured) {
+      const app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+    } else {
+      document.getElementById("setupBanner").style.display = "block";
+    }
+
+    const LOCAL_GUEST_KEY = "startseite_gh_fb_guest_v1";
+
+    const PRESETS = {
+      ocean: { bg: "#0b1020", card: "#141d35", accent: "#38bdf8", text: "#f1f5f9" },
+      emerald: { bg: "#071917", card: "#0f2724", accent: "#34d399", text: "#ecfdf5" },
+      sunset: { bg: "#180d1c", card: "#26152e", accent: "#fb923c", text: "#fff7ed" },
+      light: { bg: "#eef2f7", card: "#ffffff", accent: "#0284c7", text: "#0f172a" }
+    };
+
+    const DEFAULT_NEWS_SOURCES = [
+      { id: "bild", name: "BILD", domain: "bild.de", rss: "https://www.bild.de/rssfeeds/vw-alles/vw-alles-26970200,bildkomplett=true.bild.xml" },
+      { id: "ntv", name: "n-tv", domain: "n-tv.de", rss: "https://www.n-tv.de/rss" },
+      { id: "maz", name: "MAZ", domain: "maz-online.de", rss: "https://www.maz-online.de/arc/outboundfeeds/rss/?outputType=xml" },
+      { id: "tagesschau", name: "Tagesschau", domain: "tagesschau.de", rss: "https://www.tagesschau.de/xml/rss2/" },
+      { id: "heise", name: "Heise", domain: "heise.de", rss: "https://www.heise.de/rss/heise-atom.xml" }
+    ];
+
+    const KNOWN_PROVIDERS = {
+      "google": "https://www.google.com/search?q=",
+      "youtube": "https://www.youtube.com/results?search_query=",
+      "ebay": "https://www.ebay.de/sch/i.html?_nkw=",
+      "amazon": "https://www.amazon.de/s?k=",
+      "idealo": "https://www.idealo.de/preisvergleich/MainSearchProductCategory.html?q=",
+      "geizhals": "https://geizhals.de/?fs=",
+      "kleinanzeigen": "https://www.kleinanzeigen.de/s-",
+      "otto": "https://www.otto.de/suche/",
+      "mediamarkt": "https://www.mediamarkt.de/de/search.html?query=",
+      "saturn": "https://www.saturn.de/de/search.html?query=",
+      "thomann": "https://www.thomann.de/de/search_dir.html?sw=",
+      "zalando": "https://www.zalando.de/katalog/?q=",
+      "ikea": "https://www.ikea.com/de/de/search/?q=",
+      "kaufland": "https://www.kaufland.de/s/?search_value=",
+      "lidl": "https://www.lidl.de/q/search?q=",
+      "dm": "https://www.dm.de/search?query=",
+      "rossmann": "https://www.rossmann.de/de/search?text=",
+      "wikipedia": "https://de.wikipedia.org/w/index.php?search=",
+      "duckduckgo": "https://duckduckgo.com/?q=",
+      "bing": "https://www.bing.com/search?q=",
+      "github": "https://github.com/search?q=",
+      "reddit": "https://www.reddit.com/search/?q=",
+      "ntv": "https://www.n-tv.de/suche/?q="
+    };
+
+    const newsCache = new Map();
+
+    function createDefaultState() {
+      return {
+        profile: {
+          title: "✨ Meine Startseite",
+          colors: { ...PRESETS.ocean },
+          freeLayout: false
+        },
+        widgets: [
+          {
+            id: "w-news",
+            type: "news",
+            selectedSource: "all",
+            filterQuery: "",
+            sources: structuredClone(DEFAULT_NEWS_SOURCES),
+            x: 16, y: 16, w: 460, h: 390
+          },
+          { id: "w-google", type: "search", name: "Google", searchUrl: "https://www.google.com/search?q=", domain: "google.com", placeholder: "Bei Google suchen...", x: 492, y: 16, w: 360, h: 145 },
+          { id: "w-youtube", type: "search", name: "YouTube", searchUrl: "https://www.youtube.com/results?search_query=", domain: "youtube.com", placeholder: "Auf YouTube suchen...", x: 868, y: 16, w: 360, h: 145 },
+          { id: "w-clock", type: "clock", x: 492, y: 175, w: 360, h: 155 },
+          { id: "w-weather", type: "weather", city: "Berlin", x: 868, y: 175, w: 360, h: 155 },
+          {
+            id: "w-bookmarks",
+            type: "bookmarks",
+            x: 16, y: 420, w: 560, h: 205,
+            items: [
+              { title: "BILD", url: "https://www.bild.de" },
+              { title: "MAZ", url: "https://www.maz-online.de" },
+              { title: "n-tv", url: "https://www.n-tv.de" },
+              { title: "YouTube", url: "https://www.youtube.com" }
+            ]
+          }
+        ]
+      };
+    }
+
+    let currentUser = null; // { uid, email, displayName, role }
+    let state = loadGuestState();
+    let draggedId = null;
+    let saveTimer = null;
+
+    function normalizeLoginIdentifier(raw) {
+      const cleaned = (raw || "").trim().toLowerCase();
+      if (!cleaned) return "";
+      if (cleaned.includes("@")) return cleaned;
+      const safe = cleaned.replace(/[^a-z0-9._-]/g, "") || "nutzer";
+      return `${safe}@startseite.local`;
+    }
+
+    function displayNameFromEmail(email) {
+      if (!email) return "Benutzer";
+      return email.endsWith("@startseite.local") ? email.replace("@startseite.local", "") : email;
+    }
+
+    function loadGuestState() {
+      try {
+        const raw = localStorage.getItem(LOCAL_GUEST_KEY);
+        if (!raw) return createDefaultState();
+        return normalizeState(JSON.parse(raw));
+      } catch {
+        return createDefaultState();
+      }
+    }
+
+    function normalizeState(raw) {
+      const def = createDefaultState();
+      const s = raw && typeof raw === "object" ? raw : def;
+      s.profile = s.profile || def.profile;
+      s.profile.title = s.profile.title || def.profile.title;
+      s.profile.colors = { ...def.profile.colors, ...(s.profile.colors || {}) };
+      s.profile.freeLayout = Boolean(s.profile.freeLayout);
+      s.widgets = Array.isArray(s.widgets) ? s.widgets : def.widgets;
+      s.widgets.forEach((w, idx) => {
+        if (typeof w.x !== "number") w.x = 16 + (idx % 3) * 365;
+        if (typeof w.y !== "number") w.y = 16 + Math.floor(idx / 3) * 190;
+        if (typeof w.w !== "number") w.w = w.type === "news" ? 460 : 340;
+        if (typeof w.h !== "number") w.h = w.type === "news" ? 390 : 165;
+        if (w.type === "news" && (!Array.isArray(w.sources) || !w.sources.length)) {
+          w.sources = structuredClone(DEFAULT_NEWS_SOURCES);
+        }
+      });
+      return s;
+    }
+
+    function hexToRgb(hex) {
+      const clean = (hex || "#0b1020").replace("#", "");
+      if (clean.length !== 6) return "15, 23, 42";
+      const r = parseInt(clean.slice(0, 2), 16);
+      const g = parseInt(clean.slice(2, 4), 16);
+      const b = parseInt(clean.slice(4, 6), 16);
+      return `${r}, ${g}, ${b}`;
+    }
+
+    function isLightColor(hex) {
+      const clean = (hex || "#0b1020").replace("#", "");
+      if (clean.length !== 6) return false;
+      const r = parseInt(clean.slice(0, 2), 16);
+      const g = parseInt(clean.slice(2, 4), 16);
+      const b = parseInt(clean.slice(4, 6), 16);
+      return (r * 0.299 + g * 0.587 + b * 0.114) > 155;
+    }
+
+    function applyAppearance() {
+      const colors = state.profile.colors || PRESETS.ocean;
+      const root = document.documentElement;
+      const light = isLightColor(colors.bg);
+
+      root.style.setProperty("--bg", colors.bg);
+      root.style.setProperty("--card", `rgba(${hexToRgb(colors.card)}, 0.84)`);
+      root.style.setProperty("--inner", light ? "rgba(15, 23, 42, 0.06)" : "rgba(10, 15, 30, 0.68)");
+      root.style.setProperty("--card-border", light ? "rgba(15, 23, 42, 0.14)" : "rgba(148, 163, 184, 0.18)");
+      root.style.setProperty("--text", colors.text);
+      root.style.setProperty("--muted", light ? "#475569" : "#94a3b8");
+      root.style.setProperty("--accent", colors.accent);
+      root.style.setProperty("--accent-text", isLightColor(colors.accent) ? "#061322" : "#ffffff");
+      root.style.setProperty("--bg-glow-1", `rgba(${hexToRgb(colors.accent)}, 0.18)`);
+      root.style.setProperty("--bg-glow-2", `rgba(${hexToRgb(colors.card)}, 0.26)`);
+
+      document.getElementById("pageTitle").textContent = state.profile.title || "✨ Meine Startseite";
+      document.title = (state.profile.title || "Startseite").replace(/^[^a-zA-Z0-9ÄÖÜäöüß]+/, "") || "Startseite";
+
+      document.getElementById("settingTitle").value = state.profile.title || "";
+      document.getElementById("colBg").value = colors.bg;
+      document.getElementById("colCard").value = colors.card;
+      document.getElementById("colAccent").value = colors.accent;
+      document.getElementById("colText").value = colors.text;
+
+      const grid = document.getElementById("grid");
+      const modeBtn = document.getElementById("layoutModeBtn");
+      const hintEl = document.getElementById("layoutHint");
+      if (state.profile.freeLayout) {
+        grid.classList.remove("canvas-grid");
+        grid.classList.add("canvas-free");
+        modeBtn.textContent = "🧲 Frei bewegen: An";
+        modeBtn.classList.add("active-mode");
+        hintEl.textContent = "Ziehe Widgets an ⋮⋮ und verändere die Größe unten rechts an der Ecke.";
+      } else {
+        grid.classList.remove("canvas-free");
+        grid.classList.add("canvas-grid");
+        modeBtn.textContent = "🧲 Frei bewegen: Aus";
+        modeBtn.classList.remove("active-mode");
+        hintEl.textContent = "";
+      }
+    }
+
+    window.applyPresetColors = function(name) {
+      if (!PRESETS[name]) return;
+      state.profile.colors = { ...PRESETS[name] };
+      applyAppearance();
+      scheduleSave("Farbvorlage gespeichert");
+    };
+
+    window.updateAppearance = function() {
+      state.profile.title = document.getElementById("settingTitle").value || "✨ Meine Startseite";
+      state.profile.colors = {
+        bg: document.getElementById("colBg").value,
+        card: document.getElementById("colCard").value,
+        accent: document.getElementById("colAccent").value,
+        text: document.getElementById("colText").value
+      };
+      applyAppearance();
+      scheduleSave("Design gespeichert");
+    };
+
+    window.toggleLayoutMode = function() {
+      state.profile.freeLayout = !state.profile.freeLayout;
+      applyAppearance();
+      render();
+      scheduleSave(state.profile.freeLayout ? "Freies Verschieben aktiviert" : "Raster-Ansicht aktiviert");
+    };
+
+    window.resetPositions = function() {
+      state.widgets.forEach((w, idx) => {
+        w.x = 16 + (idx % 3) * 365;
+        w.y = 16 + Math.floor(idx / 3) * 190;
+        w.w = w.type === "news" ? 460 : 340;
+        w.h = w.type === "news" ? 390 : 165;
+      });
+      render();
+      scheduleSave("Positionen zurückgesetzt");
+    };
+
+    function updateAuthUI() {
+      const authBtn = document.getElementById("authBtn");
+      const adminBtn = document.getElementById("adminBtn");
+      const loggedInBox = document.getElementById("loggedInBox");
+      const authFormsBox = document.getElementById("authFormsBox");
+
+      if (currentUser) {
+        authBtn.textContent = "👤 " + currentUser.displayName;
+        adminBtn.style.display = currentUser.role === "admin" ? "inline-block" : "none";
+        loggedInBox.style.display = "flex";
+        authFormsBox.style.display = "none";
+        document.getElementById("currentUserLabel").textContent = currentUser.displayName;
+        const badge = document.getElementById("currentRoleBadge");
+        badge.textContent = currentUser.role === "admin" ? "ADMIN" : "USER";
+        badge.className = currentUser.role === "admin" ? "badge admin" : "badge";
+      } else {
+        authBtn.textContent = "👤 Login / Registrieren";
+        adminBtn.style.display = "none";
+        loggedInBox.style.display = "none";
+        authFormsBox.style.display = "block";
+      }
+    }
+
+    window.switchAuthTab = function(tab) {
+      document.getElementById("tabLogin").classList.toggle("active", tab === "login");
+      document.getElementById("tabRegister").classList.toggle("active", tab === "register");
+      document.getElementById("loginForm").style.display = tab === "login" ? "flex" : "none";
+      document.getElementById("registerForm").style.display = tab === "register" ? "flex" : "none";
+      document.getElementById("authMsg").textContent = "";
+      document.getElementById("regMsg").textContent = "";
+    };
+
+    window.handleLogin = async function(e) {
+      e.preventDefault();
+      if (!isFirebaseConfigured) {
+        document.getElementById("authMsg").textContent = "Bitte zuerst firebaseConfig in index.html eintragen.";
+        return;
+      }
+      const email = normalizeLoginIdentifier(document.getElementById("loginUsername").value);
+      const password = document.getElementById("loginPassword").value;
+      const msgEl = document.getElementById("authMsg");
+      msgEl.textContent = "Melde an...";
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        msgEl.textContent = "";
+        closeModal("authModal");
+      } catch (err) {
+        msgEl.textContent = "Login fehlgeschlagen: " + (err.message || "Zugangsdaten prüfen");
+      }
+    };
+
+    window.handleRegister = async function(e) {
+      e.preventDefault();
+      if (!isFirebaseConfigured) {
+        document.getElementById("regMsg").textContent = "Bitte zuerst firebaseConfig in index.html eintragen.";
+        return;
+      }
+      const rawInput = document.getElementById("regUsername").value;
+      const email = normalizeLoginIdentifier(rawInput);
+      const password = document.getElementById("regPassword").value;
+      const msgEl = document.getElementById("regMsg");
+      msgEl.textContent = "Erstelle Konto...";
+
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = cred.user.uid;
+        const usersSnap = await getDocs(collection(db, "users"));
+        const role = usersSnap.empty ? "admin" : "user";
+        const displayName = displayNameFromEmail(email);
+
+        await setDoc(doc(db, "users", uid), {
+          email,
+          displayName,
+          role,
+          createdAt: Date.now()
+        });
+        await setDoc(doc(db, "dashboards", uid), {
+          state: createDefaultState(),
+          updatedAt: Date.now()
+        });
+
+        msgEl.textContent = "";
+        closeModal("authModal");
+      } catch (err) {
+        msgEl.textContent = "Registrierung fehlgeschlagen: " + (err.message || "Bitte Daten prüfen");
+      }
+    };
+
+    window.logoutUser = async function() {
+      if (auth && currentUser) {
+        await signOut(auth);
+      }
+      currentUser = null;
+      state = loadGuestState();
+      updateAuthUI();
+      applyAppearance();
+      render();
+      setStatus("Abgemeldet – lokaler Browser-Modus aktiv");
+      closeModal("authModal");
+    };
+
+    async function loadUserFromFirestore(firebaseUser) {
+      const displayName = displayNameFromEmail(firebaseUser.email);
+      let role = "user";
+
+      const userDocRef = doc(db, "users", firebaseUser.uid);
+      const userSnap = await getDoc(userDocRef);
+      if (userSnap.exists()) {
+        role = userSnap.data().role || "user";
+      } else {
+        const usersSnap = await getDocs(collection(db, "users"));
+        role = usersSnap.empty ? "admin" : "user";
+        await setDoc(userDocRef, {
+          email: firebaseUser.email,
+          displayName,
+          role,
+          createdAt: Date.now()
+        });
+      }
+
+      currentUser = {
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName,
+        role
+      };
+      updateAuthUI();
+
+      const dashSnap = await getDoc(doc(db, "dashboards", firebaseUser.uid));
+      if (dashSnap.exists() && dashSnap.data().state) {
+        state = normalizeState(dashSnap.data().state);
+      } else {
+        state = createDefaultState();
+        await setDoc(doc(db, "dashboards", firebaseUser.uid), {
+          state,
+          updatedAt: Date.now()
+        });
+      }
+
+      applyAppearance();
+      render();
+      setStatus("Eingeloggt als " + currentUser.displayName + " (Firebase Cloud)");
+    }
+
+    function scheduleSave(label = "Gespeichert") {
+      if (saveTimer) clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => persistState(label), 250);
+    }
+
+    async function persistState(statusText = "Gespeichert") {
+      localStorage.setItem(LOCAL_GUEST_KEY, JSON.stringify(state));
+      if (!currentUser || !db) {
+        setStatus(statusText + " (lokal im Browser)");
+        return;
+      }
+      try {
+        await setDoc(doc(db, "dashboards", currentUser.uid), {
+          state,
+          updatedAt: Date.now()
+        }, { merge: true });
+        setStatus(statusText + " (Firebase: " + currentUser.displayName + ")");
+      } catch {
+        setStatus("Fehler beim Speichern in Firebase.");
+      }
+    }
+
+    async function loadAdminUsers() {
+      if (!currentUser || currentUser.role !== "admin" || !db) return;
+      const listEl = document.getElementById("adminUserList");
+      listEl.textContent = "Lade Benutzer...";
+      try {
+        const snap = await getDocs(collection(db, "users"));
+        const rows = [];
+        snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+        listEl.innerHTML = rows.length ? rows.map(u => {
+          const isSelf = u.id === currentUser.uid;
+          const label = u.displayName || displayNameFromEmail(u.email);
+          return `
+            <div class="user-item">
+              <div>
+                <strong>${escapeHtml(label)}</strong>
+                <span class="badge ${(u.role || "user") === "admin" ? "admin" : ""}">${(u.role || "user").toUpperCase()}</span>
+              </div>
+              <div class="field-row">
+                <button class="ghost" onclick="adminToggleRole('${escapeHtml(u.id)}', '${(u.role || "user") === "admin" ? "user" : "admin"}')">
+                  ${(u.role || "user") === "admin" ? "Zu User" : "Zu Admin"}
+                </button>
+                ${isSelf ? "" : `<button class="danger-btn" onclick="adminDeleteProfile('${escapeHtml(u.id)}')">Profil löschen</button>`}
+              </div>
+            </div>
+          `;
+        }).join("") : "Keine Benutzer gefunden.";
+      } catch {
+        listEl.textContent = "Konnte Benutzerliste nicht laden (Firestore-Regeln prüfen).";
+      }
+    }
+
+    window.adminToggleRole = async function(uid, newRole) {
+      if (!db) return;
+      await setDoc(doc(db, "users", uid), { role: newRole }, { merge: true });
+      document.getElementById("adminMsg").textContent = "Rolle aktualisiert.";
+      loadAdminUsers();
+    };
+
+    window.adminDeleteProfile = async function(uid) {
+      if (!db || !confirm("Profil- und Dashboard-Daten dieses Nutzers in Firestore löschen?")) return;
+      await deleteDoc(doc(db, "users", uid));
+      await deleteDoc(doc(db, "dashboards", uid));
+      document.getElementById("adminMsg").textContent = "Profil gelöscht.";
+      loadAdminUsers();
+    };
+
+    window.openModal = function(id) {
+      if (id === "settingsModal") applyAppearance();
+      if (id === "authModal") updateAuthUI();
+      if (id === "adminModal") loadAdminUsers();
+      document.getElementById(id).classList.add("open");
+    };
+
+    window.closeModal = function(id) {
+      document.getElementById(id).classList.remove("open");
+    };
+
+    window.closeModalOnBackdrop = function(event, id) {
+      if (event.target.id === id) closeModal(id);
+    };
+
+    function setStatus(msg) {
+      document.getElementById("status").textContent = msg || "";
+    }
+
+    function resolveKnownProviderUrl(rawUrl, fallbackName) {
+      const trimmed = (rawUrl || "").trim();
+      if (!trimmed) return "";
+      const withProto = /^https?:\/\//i.test(trimmed) ? trimmed : "https://" + trimmed;
+      try {
+        const parsed = new URL(withProto);
+        const hasExplicitSearchSyntax =
+          trimmed.includes("{q}") ||
+          parsed.search.includes("=") ||
+          trimmed.endsWith("?") ||
+          trimmed.endsWith("&") ||
+          trimmed.endsWith("=") ||
+          (parsed.pathname.length > 1 && trimmed.endsWith("/"));
+
+        if (hasExplicitSearchSyntax) return withProto;
+
+        const host = parsed.hostname.replace(/^www\./, "").toLowerCase();
+        const brandKey = host.split(".")[0];
+        if (KNOWN_PROVIDERS[brandKey]) return KNOWN_PROVIDERS[brandKey];
+
+        const cleanNameKey = (fallbackName || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+        if (KNOWN_PROVIDERS[cleanNameKey]) return KNOWN_PROVIDERS[cleanNameKey];
+
+        return "https://www.google.com/search?q=" + encodeURIComponent("site:" + host + " ") + "{q}";
+      } catch {
+        const cleanNameKey = trimmed.toLowerCase().replace(/[^a-z0-9]/g, "");
+        if (KNOWN_PROVIDERS[cleanNameKey]) return KNOWN_PROVIDERS[cleanNameKey];
+        return "https://www.google.com/search?q=" + encodeURIComponent(trimmed + " ") + "{q}";
+      }
+    }
+
+    function buildSearchTarget(searchUrl, query) {
+      const cleanQuery = (query || "").trim();
+      const encoded = encodeURIComponent(cleanQuery);
+      if (!searchUrl) return "https://www.google.com/search?q=" + encoded;
+      if (searchUrl.includes("{q}")) return searchUrl.replaceAll("{q}", encoded);
+      const resolved = resolveKnownProviderUrl(searchUrl, "");
+      if (resolved.includes("{q}")) return resolved.replaceAll("{q}", encoded);
+      return resolved + encoded;
+    }
+
+    function openSearchInNewTab(searchUrl, query) {
+      const cleanQuery = (query || "").trim();
+      if (!cleanQuery) return;
+      window.open(buildSearchTarget(searchUrl, cleanQuery), "_blank", "noopener,noreferrer");
+    }
+
+    window.handleGlobalSearch = function(e) {
+      e.preventDefault();
+      const baseUrl = document.getElementById("engine").value;
+      const input = document.getElementById("searchInput");
+      openSearchInNewTab(baseUrl, input.value);
+      input.value = "";
+    };
+
+    function handleProviderWidgetSearch(e, searchUrl) {
+      e.preventDefault();
+      const input = e.target.querySelector("input");
+      openSearchInNewTab(searchUrl, input.value);
+      input.value = "";
+    }
+
+    window.addSearchProvider = function(name, searchUrl, domain, placeholder) {
+      const id = "w-" + Date.now() + "-" + Math.random().toString(36).slice(2, 5);
+      state.widgets.unshift({
+        id,
+        type: "search",
+        name,
+        searchUrl,
+        domain,
+        placeholder: placeholder || ("Bei " + name + " suchen..."),
+        x: 24, y: 24, w: 340, h: 145
+      });
+      render();
+      scheduleSave(name + "-Widget hinzugefügt");
+      closeModal("widgetModal");
+    };
+
+    window.addCustomSearchProvider = function(e) {
+      e.preventDefault();
+      const nameInput = document.getElementById("customProviderName");
+      const urlInput = document.getElementById("customProviderUrl");
+      const name = nameInput.value.trim();
+      const rawInput = urlInput.value.trim();
+      if (!name || !rawInput) return;
+
+      const resolvedSearchUrl = resolveKnownProviderUrl(rawInput, name);
+      let domain = "";
+      try {
+        const candidate = /^https?:\/\//i.test(rawInput) ? rawInput : "https://" + rawInput;
+        domain = new URL(candidate).hostname;
+      } catch {
+        try {
+          domain = new URL(resolvedSearchUrl.replace("{q}", "test")).hostname;
+        } catch {}
+      }
+
+      nameInput.value = "";
+      urlInput.value = "";
+      addSearchProvider(name, resolvedSearchUrl, domain, "Bei " + name + " suchen...");
+    };
+
+    window.addWidget = function(type) {
+      const id = "w-" + Date.now() + "-" + Math.random().toString(36).slice(2, 5);
+      const base = { id, type, x: 32, y: 32, w: 340, h: 170 };
+      if (type === "news") {
+        state.widgets.unshift({
+          ...base,
+          w: 460,
+          h: 390,
+          selectedSource: "all",
+          filterQuery: "",
+          sources: structuredClone(DEFAULT_NEWS_SOURCES)
+        });
+      } else if (type === "clock") state.widgets.push(base);
+      else if (type === "weather") {
+        const city = (prompt("Für welche Stadt?", "Berlin") || "Berlin").trim() || "Berlin";
+        state.widgets.push({ ...base, city });
+      } else if (type === "bookmarks") state.widgets.push({ ...base, w: 460, h: 205, items: [] });
+      else if (type === "note") state.widgets.push({ ...base, h: 200, text: "" });
+      render();
+      scheduleSave("Widget hinzugefügt");
+    };
+
+    window.removeWidget = function(id) {
+      state.widgets = state.widgets.filter(w => w.id !== id);
+      render();
+      scheduleSave("Widget entfernt");
+    };
+
+    /* Nachrichten über rss2json.com (kein eigenes Backend nötig) + Seitensuche */
+    async function fetchSourceItems(source) {
+      const cacheKey = source.rss || source.domain;
+      const cached = newsCache.get(cacheKey);
+      if (cached && Date.now() - cached.ts < 1000 * 60 * 5) {
+        return cached.items;
+      }
+      if (!source.rss) return [];
+      try {
+        const apiUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(source.rss);
+        const res = await fetch(apiUrl);
+        if (!res.ok) return [];
+        const data = await res.json();
+        const items = (data.items || []).map(it => {
+          const d = it.pubDate ? new Date(it.pubDate) : null;
+          const timeStr = d && !Number.isNaN(d.getTime())
+            ? d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })
+            : "";
+          return {
+            title: it.title,
+            link: it.link,
+            pubDate: timeStr,
+            sourceName: source.name,
+            sourceId: source.id,
+            domain: source.domain
+          };
+        }).filter(it => it.title && /^https?:\/\//i.test(it.link));
+        newsCache.set(cacheKey, { ts: Date.now(), items });
+        return items;
+      } catch {
+        return [];
+      }
+    }
+
+    async function renderNewsWidget(widgetObj) {
+      const listEl = document.getElementById("news-list-" + widgetObj.id);
+      if (!listEl) return;
+      listEl.innerHTML = '<div class="weather-meta">Lade aktuelle Nachrichten...</div>';
+
+      const sources = Array.isArray(widgetObj.sources) ? widgetObj.sources : DEFAULT_NEWS_SOURCES;
+      const selected = widgetObj.selectedSource || "all";
+      const activeSources = selected === "all"
+        ? sources
+        : sources.filter(s => s.id === selected);
+
+      const results = await Promise.all(activeSources.map(s => fetchSourceItems(s)));
+      let allItems = results.flat();
+
+      const q = (widgetObj.filterQuery || "").trim().toLowerCase();
+      if (q) {
+        allItems = allItems.filter(it =>
+          (it.title || "").toLowerCase().includes(q) ||
+          (it.sourceName || "").toLowerCase().includes(q)
+        );
+      }
+
+      if (!allItems.length) {
+        const targetSrc = activeSources[0] || sources[0];
+        const searchHint = q
+          ? `Keine passenden Schlagzeilen für „${escapeHtml(widgetObj.filterQuery)}“ gefunden.`
+          : "Keine RSS-Schlagzeilen abrufbar – du kannst aber direkt auf der Seite suchen.";
+        listEl.innerHTML = `
+          <div class="weather-meta">${searchHint}</div>
+          ${q && targetSrc ? `<button class="ghost" type="button" onclick="searchNewsSiteNow('${widgetObj.id}')">„${escapeHtml(widgetObj.filterQuery)}“ auf ${escapeHtml(targetSrc.name)} im neuen Tab suchen ↗</button>` : ""}
+        `;
+        return;
+      }
+
+      listEl.innerHTML = allItems.slice(0, 25).map(it => `
+        <a class="news-item" href="${escapeHtml(it.link)}" target="_blank" rel="noopener noreferrer">
+          <div class="news-headline">${escapeHtml(it.title)}</div>
+          <div class="news-meta">
+            <span>${escapeHtml(it.sourceName)}</span>
+            <span>${escapeHtml(it.pubDate)}</span>
+          </div>
+        </a>
+      `).join("");
+    }
+
+    window.changeNewsSource = function(widgetId, sourceId) {
+      const w = state.widgets.find(i => i.id === widgetId);
+      if (!w) return;
+      w.selectedSource = sourceId;
+      renderNewsWidget(w);
+      scheduleSave("Nachrichten-Quelle geändert");
+    };
+
+    window.filterNewsInput = function(widgetId, val) {
+      const w = state.widgets.find(i => i.id === widgetId);
+      if (!w) return;
+      w.filterQuery = val;
+      renderNewsWidget(w);
+    };
+
+    window.searchNewsSiteNow = function(widgetId) {
+      const w = state.widgets.find(i => i.id === widgetId);
+      if (!w) return;
+      const query = (w.filterQuery || "").trim() || prompt("Wonach auf der Nachrichten-Seite suchen?") || "";
+      if (!query.trim()) return;
+
+      const sources = Array.isArray(w.sources) ? w.sources : DEFAULT_NEWS_SOURCES;
+      const src = w.selectedSource && w.selectedSource !== "all"
+        ? sources.find(s => s.id === w.selectedSource) || sources[0]
+        : sources[0];
+
+      const domain = (src && src.domain) || "bild.de";
+      const searchUrl = resolveKnownProviderUrl(domain, src && src.name);
+      openSearchInNewTab(searchUrl, query.trim());
+    };
+
+    window.addCustomNewsSource = function(e, widgetId) {
+      e.preventDefault();
+      const w = state.widgets.find(i => i.id === widgetId);
+      if (!w) return;
+      const form = e.target;
+      const nameVal = form.querySelector('input[name="srcName"]').value.trim();
+      const domainOrRssVal = form.querySelector('input[name="srcUrl"]').value.trim();
+      if (!domainOrRssVal) return;
+
+      let domain = "";
+      let rss = "";
+      if (/rss|xml|feed/i.test(domainOrRssVal)) {
+        rss = /^https?:\/\//i.test(domainOrRssVal) ? domainOrRssVal : "https://" + domainOrRssVal;
+        try { domain = new URL(rss).hostname.replace(/^www\./, ""); } catch {}
+      } else {
+        const cleanHost = domainOrRssVal.replace(/^https?:\/\//i, "").replace(/^www\./, "").split("/")[0].toLowerCase();
+        domain = cleanHost;
+        rss = `https://${cleanHost}/rss`;
+      }
+
+      const name = nameVal || domain || "Quelle";
+      const id = "src-" + Date.now().toString(36);
+      w.sources = w.sources || structuredClone(DEFAULT_NEWS_SOURCES);
+      w.sources.push({ id, name, domain, rss });
+      w.selectedSource = id;
+      form.reset();
+      render();
+      scheduleSave(`Nachrichten-Quelle "${name}" hinzugefügt`);
+    };
+
+    window.editWeatherCity = function(id) {
+      const w = state.widgets.find(item => item.id === id);
+      if (!w) return;
+      const city = (prompt("Neue Stadt:", w.city || "Berlin") || "").trim();
+      if (!city) return;
+      w.city = city;
+      render();
+      scheduleSave("Wetterort aktualisiert");
+    };
+
+    window.updateNote = function(id, value) {
+      const w = state.widgets.find(item => item.id === id);
+      if (!w) return;
+      w.text = value;
+      scheduleSave("Notiz gespeichert");
+    };
+
+    function normalizeUrl(rawUrl) {
+      const trimmed = (rawUrl || "").trim();
+      if (!trimmed) return "";
+      if (/^https?:\/\//i.test(trimmed)) return trimmed;
+      return "https://" + trimmed;
+    }
+
+    function getFaviconUrl(urlOrDomain) {
+      if (!urlOrDomain) return "";
+      try {
+        const clean = urlOrDomain.replace("{q}", "test");
+        const host = clean.includes("://") ? new URL(clean).hostname : clean;
+        return "https://www.google.com/s2/favicons?domain=" + encodeURIComponent(host) + "&sz=32";
+      } catch {
+        return "";
+      }
+    }
+
+    window.addBookmark = function(event, widgetId) {
+      event.preventDefault();
+      const form = event.target;
+      const titleInput = form.querySelector('input[name="title"]');
+      const urlInput = form.querySelector('input[name="url"]');
+      const cleanUrl = normalizeUrl(urlInput.value);
+      if (!cleanUrl) return;
+      let title = titleInput.value.trim();
+      if (!title) {
+        try { title = new URL(cleanUrl).hostname.replace(/^www\./, ""); } catch { title = cleanUrl; }
+      }
+      const w = state.widgets.find(item => item.id === widgetId);
+      if (!w) return;
+      w.items = w.items || [];
+      w.items.push({ title, url: cleanUrl });
+      titleInput.value = "";
+      urlInput.value = "";
+      render();
+      scheduleSave("Lesezeichen gespeichert");
+    };
+
+    window.removeBookmark = function(event, widgetId, index) {
+      event.preventDefault();
+      event.stopPropagation();
+      const w = state.widgets.find(item => item.id === widgetId);
+      if (!w || !Array.isArray(w.items)) return;
+      w.items.splice(index, 1);
+      render();
+      scheduleSave("Lesezeichen gelöscht");
+    };
+
+    async function loadWeather(city, targetEl) {
+      try {
+        const geoRes = await fetch("https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(city) + "&count=1&language=de");
+        const geo = await geoRes.json();
+        if (!geo.results || !geo.results.length) {
+          targetEl.innerHTML = '<div class="weather-meta">Stadt "' + escapeHtml(city) + '" nicht gefunden.</div>';
+          return;
+        }
+        const { latitude, longitude, name } = geo.results[0];
+        const wRes = await fetch("https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&current=temperature_2m,wind_speed_10m");
+        const wData = await wRes.json();
+        targetEl.innerHTML =
+          '<div class="weather-temp">' + Math.round(wData.current.temperature_2m) + ' °C</div>' +
+          '<div class="weather-meta">' + escapeHtml(name) + ' · Wind ' + Math.round(wData.current.wind_speed_10m) + ' km/h</div>';
+      } catch {
+        targetEl.innerHTML = '<div class="weather-meta">Wetter aktuell nicht verfügbar.</div>';
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function updateClocks() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      const dateStr = now.toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "long", year: "numeric" });
+      document.querySelectorAll("[data-clock-time]").forEach(el => { el.textContent = timeStr; });
+      document.querySelectorAll("[data-clock-date]").forEach(el => { el.textContent = dateStr; });
+    }
+
+    function enableFreeDragAndResize(card, handle, widgetObj) {
+      handle.addEventListener("pointerdown", e => {
+        e.preventDefault();
+        const canvasRect = document.getElementById("grid").getBoundingClientRect();
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const origX = widgetObj.x || 0;
+        const origY = widgetObj.y || 0;
+
+        card.classList.add("dragging");
+        handle.setPointerCapture(e.pointerId);
+
+        function onMove(moveEv) {
+          const maxX = Math.max(0, canvasRect.width - card.offsetWidth);
+          widgetObj.x = Math.max(0, Math.min(maxX, origX + (moveEv.clientX - startX)));
+          widgetObj.y = Math.max(0, origY + (moveEv.clientY - startY));
+          card.style.left = widgetObj.x + "px";
+          card.style.top = widgetObj.y + "px";
+        }
+
+        function onUp() {
+          card.classList.remove("dragging");
+          handle.removeEventListener("pointermove", onMove);
+          handle.removeEventListener("pointerup", onUp);
+          scheduleSave("Position gespeichert");
+        }
+
+        handle.addEventListener("pointermove", onMove);
+        handle.addEventListener("pointerup", onUp);
+      });
+
+      const ro = new ResizeObserver(entries => {
+        for (const entry of entries) {
+          const wVal = Math.round(entry.contentRect.width + 32);
+          const hVal = Math.round(entry.contentRect.height + 32);
+          if (wVal > 220 && hVal > 110 && (widgetObj.w !== wVal || widgetObj.h !== hVal)) {
+            widgetObj.w = wVal;
+            widgetObj.h = hVal;
+            scheduleSave("Größe gespeichert");
+          }
+        }
+      });
+      ro.observe(card);
+    }
+
+    function enableGridReorder(card, widgetObj) {
+      card.draggable = true;
+      card.addEventListener("dragstart", () => {
+        draggedId = widgetObj.id;
+        card.classList.add("dragging");
+      });
+      card.addEventListener("dragend", () => {
+        draggedId = null;
+        card.classList.remove("dragging");
+        document.querySelectorAll(".widget.drag-over").forEach(el => el.classList.remove("drag-over"));
+      });
+      card.addEventListener("dragover", e => {
+        e.preventDefault();
+        if (draggedId && draggedId !== widgetObj.id) card.classList.add("drag-over");
+      });
+      card.addEventListener("dragleave", () => card.classList.remove("drag-over"));
+      card.addEventListener("drop", e => {
+        e.preventDefault();
+        card.classList.remove("drag-over");
+        if (!draggedId || draggedId === widgetObj.id) return;
+        const fromIdx = state.widgets.findIndex(i => i.id === draggedId);
+        const toIdx = state.widgets.findIndex(i => i.id === widgetObj.id);
+        if (fromIdx === -1 || toIdx === -1) return;
+        const [moved] = state.widgets.splice(fromIdx, 1);
+        state.widgets.splice(toIdx, 0, moved);
+        render();
+        scheduleSave("Reihenfolge gespeichert");
+      });
+    }
+
+    function render() {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+      const free = Boolean(state.profile.freeLayout);
+
+      state.widgets.forEach(w => {
+        const card = document.createElement("section");
+        card.className = "widget";
+        card.dataset.id = w.id;
+
+        if (free) {
+          card.style.left = (w.x || 16) + "px";
+          card.style.top = (w.y || 16) + "px";
+          card.style.width = (w.w || 340) + "px";
+          card.style.height = (w.h || 165) + "px";
+        }
+
+        let titleHtml = "Widget";
+        let extraHeadBtn = "";
+        let bodyHtml = "";
+
+        if (w.type === "news") {
+          titleHtml = "📰 <span>Nachrichten</span>";
+          const sources = Array.isArray(w.sources) && w.sources.length ? w.sources : DEFAULT_NEWS_SOURCES;
+          const optionsHtml = [
+            `<option value="all" ${w.selectedSource === "all" ? "selected" : ""}>Alle Quellen</option>`,
+            ...sources.map(s => `<option value="${escapeHtml(s.id)}" ${w.selectedSource === s.id ? "selected" : ""}>${escapeHtml(s.name)}</option>`)
+          ].join("");
+
+          bodyHtml = `
+            <div class="news-controls">
+              <select onchange="changeNewsSource('${w.id}', this.value)">${optionsHtml}</select>
+              <input type="text" value="${escapeHtml(w.filterQuery || "")}" placeholder="Filtern oder auf Seite suchen..." oninput="filterNewsInput('${w.id}', this.value)" />
+              <button class="primary" type="button" title="Auf gewählter Seite im neuen Tab suchen" onclick="searchNewsSiteNow('${w.id}')">Seite suchen ↗</button>
+            </div>
+            <div class="news-list" id="news-list-${w.id}"></div>
+            <form class="news-add-source" onsubmit="addCustomNewsSource(event, '${w.id}')">
+              <input type="text" name="srcName" placeholder="Quelle (z. B. Spiegel)" />
+              <input type="text" name="srcUrl" placeholder="Domain oder RSS (z. B. spiegel.de)" required />
+              <button type="submit">+ Quelle</button>
+            </form>
+          `;
+        } else if (w.type === "search") {
+          const fav = getFaviconUrl(w.domain || w.searchUrl);
+          titleHtml = (fav ? '<img src="' + escapeHtml(fav) + '" alt="" />' : "🔎") + '<span>' + escapeHtml(w.name || "Suche") + '</span>';
+          bodyHtml =
+            '<form class="provider-search-form">' +
+              '<input type="text" placeholder="' + escapeHtml(w.placeholder || ("Bei " + (w.name || "") + " suchen...")) + '" required />' +
+              '<button class="primary" type="submit" title="In neuem Tab suchen">↗</button>' +
+            '</form>';
+        } else if (w.type === "clock") {
+          titleHtml = "🕒 <span>Uhrzeit</span>";
+          bodyHtml = '<div class="clock-time" data-clock-time>--:--:--</div><div class="clock-date" data-clock-date></div>';
+        } else if (w.type === "weather") {
+          titleHtml = "🌤️ <span>Wetter</span>";
+          extraHeadBtn = '<button class="icon-btn" title="Ort ändern" onclick="editWeatherCity('' + w.id + '')">✎</button>';
+          bodyHtml = '<div id="weather-body-' + w.id + '"><div class="weather-meta">Lade Wetter für ' + escapeHtml(w.city || "Berlin") + '...</div></div>';
+        } else if (w.type === "bookmarks") {
+          titleHtml = "🔖 <span>Lesezeichen</span>";
+          const items = Array.isArray(w.items) ? w.items : [];
+          const tilesHtml = items.length
+            ? items.map((bm, idx) => {
+                const fav = getFaviconUrl(bm.url);
+                return (
+                  '<a class="bm-tile" target="_blank" rel="noopener noreferrer" href="' + escapeHtml(bm.url) + '" title="' + escapeHtml(bm.title + " – " + bm.url) + '">' +
+                    (fav ? '<img src="' + escapeHtml(fav) + '" alt="" />' : "") +
+                    '<span>' + escapeHtml(bm.title) + '</span>' +
+                    '<button type="button" class="bm-del" title="Entfernen" onclick="removeBookmark(event, '' + w.id + '', ' + idx + ')">✕</button>' +
+                  '</a>'
+                );
+              }).join("")
+            : '<div class="weather-meta">Noch keine Lesezeichen.</div>';
+          bodyHtml =
+            '<div class="bookmarks-grid">' + tilesHtml + '</div>' +
+            '<form class="inline-form" onsubmit="addBookmark(event, '' + w.id + '')">' +
+              '<input type="text" name="title" placeholder="Name" />' +
+              '<input type="text" name="url" placeholder="URL (z. B. idealo.de)" required />' +
+              '<button type="submit">+</button>' +
+            '</form>';
+        } else if (w.type === "note") {
+          titleHtml = "📝 <span>Notizen</span>";
+          bodyHtml = '<textarea placeholder="Notizen..." oninput="updateNote('' + w.id + '', this.value)">' + escapeHtml(w.text || "") + '</textarea>';
+        }
+
+        card.innerHTML =
+          '<div class="widget-head">' +
+            '<div class="widget-title"><span class="drag-handle" title="Ziehen">⋮⋮</span>' + titleHtml + '</div>' +
+            '<div>' + extraHeadBtn + '<button class="icon-btn del" title="Widget löschen" onclick="removeWidget('' + w.id + '')">✕</button></div>' +
+          '</div>' +
+          bodyHtml;
+
+        const handle = card.querySelector(".drag-handle");
+        if (free) {
+          enableFreeDragAndResize(card, handle, w);
+        } else {
+          enableGridReorder(card, w);
+        }
+
+        grid.appendChild(card);
+
+        if (w.type === "news") {
+          renderNewsWidget(w);
+        } else if (w.type === "search") {
+          card.querySelector(".provider-search-form").addEventListener("submit", e => handleProviderWidgetSearch(e, w.searchUrl));
+        } else if (w.type === "weather") {
+          loadWeather(w.city || "Berlin", document.getElementById("weather-body-" + w.id));
+        }
+      });
+
+      updateClocks();
+    }
+
+    updateAuthUI();
+    applyAppearance();
+    render();
+    setInterval(updateClocks, 1000);
+
+    if (isFirebaseConfigured && auth) {
+      onAuthStateChanged(auth, async user => {
+        if (user) {
+          await loadUserFromFirestore(user);
+        } else {
+          currentUser = null;
+          state = loadGuestState();
+          updateAuthUI();
+          applyAppearance();
+          render();
+          setStatus("Nicht eingeloggt – klicke auf „Login / Registrieren“ für dein Firebase-Konto");
+        }
+      });
+    } else {
+      setStatus("Lokaler Modus aktiv – Firebase-Config in index.html eintragen für Cloud-Login");
+    }
+  </script>
+</body>
+</html>
